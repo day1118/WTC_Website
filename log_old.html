@@ -1,0 +1,173 @@
+<html><!-- InstanceBegin template="/Templates/default.dwt" codeOutsideHTMLIsLocked="false" --><head>
+<script language='javascript' src='jquery/jquery-1.8.3.min.js'></script>
+<script language='javascript' src='jquery/jquery.timers.js'></script>
+<script language='javascript' src='_javascript/dateformat.js'></script>
+
+<link href="_CSS/RPi.css" rel="stylesheet" type="text/css" />
+<!-- InstanceBeginEditable name="head" -->
+<script type='text/javascript'>
+$curTime = 'Waiting for connection';
+var logArray = [];
+
+$(document).ready(function()
+{
+	var j = jQuery.noConflict();
+	j(document).ready(function()
+	{
+		j(document).everyTime(1000,function(i)
+		{
+			j.ajax(
+			{
+				url: '/cgi-bin/php/curTime.php',
+				cache: false,
+				success: function($html){$curTime = $html;},
+				timeout: 3000,
+				error: function(){$curTime = 'No Connection';}
+			})
+			
+			j.getJSON('/cgi-bin/php/log.php', function(json)
+			{ 
+				logArray = json;
+			}); //End json
+		
+			j('.currentTime').html($curTime);
+			
+			$index = 0;
+			while(($index < 10) && ($index < logArray.length/2))
+			{
+				$row = $index+1;
+				var startTime = new Date(logArray[$index*2]*1000);
+				var endTime = new Date(logArray[($index*2)+1]*1000);
+				if(startTime > 0)
+				{
+					document.getElementById('r' + $row + 'c1').innerHTML = startTime.format('dd/mm/yy');
+					document.getElementById('r' + $row + 'c2').innerHTML = startTime.format('h:MM:ss TT');
+				}
+				else
+				{
+					document.getElementById('r' + $row + 'c1').innerHTML = '-';
+					document.getElementById('r' + $row + 'c2').innerHTML = '-';
+				}
+				
+				if(endTime > 0)
+				{
+					document.getElementById('r' + $row + 'c3').innerHTML = endTime.format('h:MM:ss TT');
+				}
+				else
+				{
+					document.getElementById('r' + $row + 'c3').innerHTML = '-';
+				}
+
+				$index++;
+			}
+		})
+	});
+});
+</script>
+
+<!-- InstanceEndEditable -->
+
+</head>
+
+<body>
+<table width="760" id="page" align="center">
+	<tr><td>
+    	<table width="710" align="center">
+			<tr><td id="title" align="right">
+            	<span class="right">Water Tank Controller</span>
+           	</td></tr>
+			<tr><td align="right">
+            	<span class="currentTime">Loading...</span>&nbsp;
+           	</td></tr>
+			<tr><td height="50" valign="top">
+            	<h1 align="center">Welcome to WTC3.0!</h1>
+            </td></tr>
+			<tr><td>
+            	<table width="706" align="center">
+                	<tr><td valign="top" id="menu">
+						<a href="/index.htm">Overview</a>
+                        <a href="/log.htm">Log</a>
+                        <a href="/admin.htm">Admin</a>
+                        <a href="/details.htm">Details</a>
+						</td><td align="center">
+	                	<h2 id="heading" class="title2"><!-- InstanceBeginEditable name="heading" -->Log<!-- InstanceEndEditable --></h2>
+                        </td><td id="menu">&nbsp;</td>
+                  	</tr>
+	             </table>
+             </td></tr>
+             <tr><td>
+			 <!-- InstanceBeginEditable name="Content" -->
+             	<table id="log" align="center">
+        	<tr><th>Date</th><th>Start Time</th><th>End Time</th>
+        	<th>Liters Pumped</th></tr>
+            <tr>
+            	<td id='r1c1'>-</td>
+                <td id='r1c2'>-</td>
+                <td id='r1c3'>-</td>
+                <td id='r1c4'>-</td>
+            </tr>
+            <tr>
+            	<td id='r2c1'>-</td>
+                <td id='r2c2'>-</td>
+                <td id='r2c3'>-</td>
+                <td id='r2c4'>-</td>
+            </tr>
+            <tr>
+            	<td id='r3c1'>-</td>
+                <td id='r3c2'>-</td>
+                <td id='r3c3'>-</td>
+                <td id='r3c4'>-</td>
+            </tr>
+            <tr>
+            	<td id='r4c1'>-</td>
+                <td id='r4c2'>-</td>
+                <td id='r4c3'>-</td>
+                <td id='r4c4'>-</td>
+            </tr>
+            <tr>
+            	<td id='r5c1'>-</td>
+                <td id='r5c2'>-</td>
+                <td id='r5c3'>-</td>
+                <td id='r5c4'>-</td>
+            </tr>
+            <tr>
+            	<td id='r6c1'>-</td>
+                <td id='r6c2'>-</td>
+                <td id='r6c3'>-</td>
+                <td id='r6c4'>-</td>
+            </tr>
+            <tr>
+            	<td id='r7c1'>-</td>
+                <td id='r7c2'>-</td>
+                <td id='r7c3'>-</td>
+                <td id='r7c4'>-</td>
+            </tr>
+            <tr>
+            	<td id='r8c1'>-</td>
+                <td id='r8c2'>-</td>
+                <td id='r8c3'>-</td>
+                <td id='r8c4'>-</td>
+            </tr>
+            <tr>
+            	<td id='r9c1'>-</td>
+                <td id='r9c2'>-</td>
+                <td id='r9c3'>-</td>
+                <td id='r9c4'>-</td>
+            </tr>
+            <tr>
+            	<td id='r10c1'>-</td>
+                <td id='r10c2'>-</td>
+                <td id='r10c3'>-</td>
+                <td id='r10c4'>-</td>
+            </tr>
+       	</table>
+			<!-- InstanceEndEditable -->	
+		  </td></tr>
+            <tr><td id="footer">
+				<span class="text">Copyright &copy; 2010 Anthony Day.</span>
+            </td></tr>
+      	</table>
+        </td></tr></table>
+</body>
+<!-- InstanceEnd --></html>
+

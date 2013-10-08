@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Untitled Document</title>
+
+<script src="../_javascript/jquery.js"></script>
+
+<script>
+im = 0;
+theImageNames = new Array();
+
+delayTime = 300;
+time = 0;
+
+radarName = "IDR023"
+
+window.onload = function () {
+	fetchData();		
+};
+
+
+function fetchData() {
+	data = [];
+	//testData2.php?latestTime=" + latestTime,
+	$.ajax({
+		url: "getFiles.php?radarName=" + radarName, 
+		type: "GET",
+		dataType: "json",
+		success: onDataReceived
+	});
+	setTimeout(fetchData, 100000);
+}
+
+function onDataReceived(series) {
+		
+		if(series != null)
+			//if(series.data != null)
+			theImageNames = series;
+		nextImage();
+}
+
+function nextImage()
+{
+
+	//document.getElementById("tempText").innerHTML = document.getElementById("inData").value; //time.format("YYYYMMDDHHmm");
+	//
+	//changeImage(imageBeginning + theImageNames[im] + imageEnding);
+	changeImage("images/" + radarName + "/" + "radar/" + theImageNames[im]);
+	im++;
+	if(im >= theImageNames.length)
+	{
+		im = 0; 
+	}
+
+	if(im == 0)
+		setTimeout('nextImage()', 8*delayTime);
+	else if(im == 1)
+		setTimeout('nextImage()', 4*delayTime);
+	else
+		setTimeout('nextImage()', delayTime);
+}
+
+function changeImage(a)
+{
+	document.getElementById("animation").src = a;	
+}
+
+function updateTime()
+{
+	document.getElementById("tempText").innerHTML = document.getElementById("inData").value; //time.format("YYYYMMDDHHmm");
+	delayTime = parseInt(document.getElementById("inData").value);
+}
+
+function changeData(newRadarName)
+{
+	radarName = newRadarName;
+	document.getElementById("rangeDiv").style.backgroundImage = "url(http://www.bom.gov.au/products/radar_transparencies/" + radarName + ".range.png)";
+	document.getElementById("topographyDiv").style.backgroundImage = "url(http://www.bom.gov.au/products/radar_transparencies/" + radarName + ".topography.png)";
+	document.getElementById("locationsDiv").style.backgroundImage = "url(http://www.bom.gov.au/products/radar_transparencies/" + radarName + ".locations.png)";
+	fetchData();
+}
+</script>
+
+</head>
+
+<body>
+<div id="overlay" style="position: absolute; top: auto; left: auto; z-index: 0; padding: 0px; margin: 0px; background-color: transparent; display: block; width: 512px; height: 557px; background-image: url(http://www.bom.gov.au/products/radar_transparencies/IDR.legend.0.png);">
+<img name="animation" id="animation" class="animation" border="0" height="512" width="512" src="http://www.bom.gov.au/radar/IDR023.T.201303271142.png" alt="Radar images">
+<div id="backgroundDiv" style="width: 512px; height: 512px; background-color: transparent; position: absolute; z-index: -3; left: 0px; top: 0px; background-image: url(http://www.bom.gov.au/products/radar_transparencies/IDR023.background.png);"></div>
+<div id="locationsDiv" style="width: 512px; height: 512px; background-color: transparent; position: absolute; z-index: 7; left: 0px; top: 0px; background-image: url(http://www.bom.gov.au/products/radar_transparencies/IDR023.locations.png);"></div>
+<div id="rangeDiv" style="width: 512px; height: 512px; background-color: transparent; position: absolute; z-index: 2; left: 0px; top: 0px; background-image: url(http://www.bom.gov.au/products/radar_transparencies/IDR023.range.png);"></div>
+<div id="topographyDiv" style="width: 512px; height: 512px; background-color: transparent; position: absolute; z-index: -2; left: 0px; top: 0px; background-image: url(http://www.bom.gov.au/products/radar_transparencies/IDR023.topography.png);"></div></div>
+
+<div style="display:block; position:absolute; left: 600px"><h1 id="tempText">tempText</h1><input type="text" id="inData" value="200" onChange="updateTime()" /></div>
+<div style="display:block; position:absolute; left: 600px; top: 600px;">
+	<a href="javascript:void(0);" onclick="changeData('IDR021')">IDR021</a>
+    <a href="javascript:void(0);" onclick="changeData('IDR022')">IDR022</a>
+   	<a href="javascript:void(0);" onclick="changeData('IDR023')">IDR023</a>
+    <a href="javascript:void(0);" onclick="changeData('IDR024')">IDR024</a>
+    <a href="javascript:void(0);" onclick="changeData('IDR00004')">National</a>
+    <a href="javascript:void(0);" onclick="changeData('IDE00135')">Sat</a>
+</div>
+
+</body>
+</html>

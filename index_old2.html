@@ -1,0 +1,240 @@
+<html><head>
+<script language='javascript' src='\jquery\jquery-1.8.3.min.js'></script>
+<script language='javascript' src='\jquery\jquery.timers.js'></script>
+<script language='javascript' src='\_javascript\dateformat.js'></script>
+
+<script type='text/javascript'>
+$BTBS = -1;
+$BTTS = -1;
+$pump = -1;
+$BTHeight = 0;
+$BTHeightUpdateTime = 0;
+$curTime = 'Waiting for connection';
+var logArray = [];
+
+$(document).ready(function()
+{
+	var j = jQuery.noConflict();
+	j(document).ready(function()
+	{
+		j('.pumpState').everyTime(1000,function(i)
+		{
+			j.ajax(
+			{
+				url: '/cgi-bin/php/button1.php',
+				cache: false,
+				success: function($html){$BTBS = parseInt($html);},
+				timeout: 3000,
+				error: function(){$BTBS = -2;}
+			})
+			
+			j.ajax(
+			{
+				url: '/cgi-bin/php/button2.php',
+				cache: false,
+				success: function($html){$BTTS = parseInt($html);},
+				timeout: 3000,
+				error: function(){$BTTS = -2;}
+			})
+
+			j.ajax(
+			{
+				url: '/cgi-bin/php/pump.php',
+				cache: false,
+				success: function($html){$pump = parseInt($html);},
+				timeout: 3000,
+				error: function(){$pump = -2;}
+			})
+
+			j.ajax(
+			{
+				url: '/cgi-bin/php/curTime.php',
+				cache: false,
+				success: function($html){$curTime = $html;},
+				timeout: 3000,
+				error: function(){$curTime = 'No Connection';}
+			})
+			
+			j.ajax(
+			{
+				url: '/cgi-bin/php/BTHeight.php',
+				cache: false,
+				success: function($html){$BTHeight = parseInt($html);},
+				timeout: 3000,
+				error: function(){$BTHeight = -2}
+			})
+			
+			j.ajax(
+			{
+				url: '/cgi-bin/php/BTHeightUpdateTime.php',
+				cache: false,
+				success: function($html){$BTHeightUpdateTime = parseInt($html);},
+				timeout: 3000,
+				error: function(){$curTime = -2;}
+			})
+			
+			j.getJSON('/cgi-bin/php/log.php', function(json)
+			{ 
+				logArray = json;
+			}); //End json
+		
+			switch($pump)
+			{
+				case 0:
+					j('.pumpState').html('OFF');
+					break;
+				case 1:
+					j('.pumpState').html('ON');
+					break;
+				default:
+					j('.pumpState').html('ERROR');
+					break;
+			}
+			
+			if($BTTS && $BTBS)
+				$height = '100%';
+			else if(!$BTTS && $BTBS)
+				$height = '60%';
+			else if(!$BTTS && !$BTBS)
+				$height = '20%';
+			else
+				$height = '0%';
+
+			// Use this one to set the display based on switches
+			j(tankInnerHeight0).height($height);
+
+			// Use this one to set the display based on analog pressure
+			//document.getElementById('tankInnerHeight0').style.height = ($BTHeight - 8) / (35-8) * 100;
+			
+			j('.currentTime').html($curTime);
+			
+			$index = 0;
+			while(($index < 5) && ($index < logArray.length/2))
+			{
+				$row = $index+1;
+				var startTime = new Date(logArray[$index*2]*1000);
+				var endTime = new Date(logArray[($index*2)+1]*1000);
+				if(startTime > 0)
+				{
+					document.getElementById('r' + $row + 'c1').innerHTML = startTime.format('dd/mm/yy');
+					document.getElementById('r' + $row + 'c2').innerHTML = startTime.format('h:MM:ss TT');
+				}
+				else
+				{
+					document.getElementById('r' + $row + 'c1').innerHTML = '-';
+					document.getElementById('r' + $row + 'c2').innerHTML = '-';
+				}
+				
+				if(endTime > 0)
+				{
+					document.getElementById('r' + $row + 'c3').innerHTML = endTime.format('h:MM:ss TT');
+				}
+				else
+				{
+					document.getElementById('r' + $row + 'c3').innerHTML = '-';
+				}
+
+				$index++;
+			}
+			
+			j('.start').html($curTime);
+		})
+	});
+});
+</script>
+
+<link href="_CSS/RPi.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<table width="760" id="page" align="center">
+	<tr><td>
+    	<table width="710" align="center">
+			<tr><td id="title" align="right">
+            	<span class="right">Water Tank Controller</span>
+           	</td></tr>
+			<tr><td align="right">
+            	<span class="currentTime">Loading...</span>&nbsp;
+           	</td></tr>
+			<tr><td height="50" valign="top">
+            	<h1 align="center">Welcome to WTC3.0!</h1>
+            </td></tr>
+			<tr><td>
+            	<table width="706" align="center">
+                	<tr><td valign="top" id="menu">
+						<a href="/index_new.html">Overview</a>
+                        <a href="/log.html">Log</a>
+                        <a href="/admin.html">Admin</a>
+                        <a href="/details.html">Details</a>
+						</td><td align="center">
+	                	<h2 id="heading" class="title2">System Overview</h2>
+                        </td><td id="menu">&nbsp;</td>
+                  	</tr>
+	             </table>
+             </td></tr>
+             <tr><td>
+
+	<table id="tank" align="center">
+		<tr><td colspan="3" align="center"><h3>Current status</h3></td></tr>
+		<tr><td width="150" valign="bottom">
+			<table class="outer">
+				<tr><td height="100" width="30"><div class="inner" id="tankInnerHeight0" style="height:10%">&nbsp;</div></td></tr>
+			</table>
+            Bottom Tank</td>
+			
+            <td class="pumpState" width="100">?</td>
+			<td width="150">
+            
+            <table class="outer">
+				<tr><td height="180" width="60"><div class="inner" id="tankInnerHeight1" style="height:130">&nbsp;</div></td></tr>
+			</table>
+            Top Tank</td></tr>
+	</table>
+    
+             </td></tr>
+             <tr><td>
+
+		<table id="log" align="center"><tr><th colspan="4">Log</th></tr>
+        	<tr><th>Date</th><th>Start Time</th><th>End Time</th>
+        	<th>Liters Pumped</th></tr>
+            <tr>
+            	<td id='r1c1'>-</td>
+                <td id='r1c2'>-</td>
+                <td id='r1c3'>-</td>
+                <td id='r1c4'>-</td>
+            </tr>
+            <tr>
+            	<td id='r2c1'>-</td>
+                <td id='r2c2'>-</td>
+                <td id='r2c3'>-</td>
+                <td id='r2c4'>-</td>
+            </tr>
+            <tr>
+            	<td id='r3c1'>-</td>
+                <td id='r3c2'>-</td>
+                <td id='r3c3'>-</td>
+                <td id='r3c4'>-</td>
+            </tr>
+            <tr>
+            	<td id='r4c1'>-</td>
+                <td id='r4c2'>-</td>
+                <td id='r4c3'>-</td>
+                <td id='r4c4'>-</td>
+            </tr>
+            <tr>
+            	<td id='r5c1'>-</td>
+                <td id='r5c2'>-</td>
+                <td id='r5c3'>-</td>
+                <td id='r5c4'>-</td>
+            </tr>
+       	</table>
+    
+			</td></tr>
+            <tr><td id="footer">
+				<span class="text">Copyright &copy; 2010 Anthony Day.</span>
+            </td></tr>
+      	</table>
+        </td></tr></table>
+</body>
+</html>
+

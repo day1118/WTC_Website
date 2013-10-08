@@ -1,0 +1,162 @@
+<html><!-- InstanceBegin template="/Templates/default.dwt" codeOutsideHTMLIsLocked="false" --><head>
+<script language='javascript' src='jquery/jquery-1.8.3.min.js'></script>
+<script language='javascript' src='jquery/jquery.timers.js'></script>
+<script language='javascript' src='_javascript/dateformat.js'></script>
+
+<link href="_CSS/RPi.css" rel="stylesheet" type="text/css" />
+<!-- InstanceBeginEditable name="head" -->
+<script type='text/javascript'>
+$BTBS = -1;
+$BTTS = -1;
+$pump = -1;
+$error = -1;
+$resetError = -1;
+$BTHeight = 0;
+$BTHeightUpdateTime = 0;
+$curTime = 'Waiting for connection';
+
+$(document).ready(function()
+{
+	var j = jQuery.noConflict();
+	j(document).ready(function()
+	{
+		j(document).everyTime(1000,function(i)
+		{
+			j.ajax(
+			{
+				url: '/cgi-bin/php/button1.php',
+				cache: false,
+				success: function($html){$BTBS = parseInt($html);},
+				timeout: 3000,
+				error: function(){$BTBS = -2;}
+			})
+			
+			j.ajax(
+			{
+				url: '/cgi-bin/php/button2.php',
+				cache: false,
+				success: function($html){$BTTS = parseInt($html);},
+				timeout: 3000,
+				error: function(){$BTTS = -2;}
+			})
+
+			j.ajax(
+			{
+				url: '/cgi-bin/php/pump.php',
+				cache: false,
+				success: function($html){$pump = parseInt($html);},
+				timeout: 3000,
+				error: function(){$pump = -2;}
+			})
+
+			j.ajax(
+			{
+				url: '/cgi-bin/php/curTime.php',
+				cache: false,
+				success: function($html){$curTime = $html;},
+				timeout: 3000,
+				error: function(){$curTime = 'No Connection';}
+			})
+
+			j.ajax(
+			{
+				url: '/cgi-bin/php/error.php',
+				cache: false,
+				success: function($html){$error = parseInt($html);},
+				timeout: 3000,
+				error: function(){$error = -2}
+			})
+			
+			j.ajax(
+			{
+				url: '/cgi-bin/php/resetError.php',
+				cache: false,
+				success: function($html){$resetError = parseInt($html);},
+				timeout: 3000,
+				error: function(){$resetError = -2;}
+			})
+
+			j.ajax(
+			{
+				url: '/cgi-bin/php/BTHeight.php',
+				cache: false,
+				success: function($html){$BTHeight = parseInt($html);},
+				timeout: 3000,
+				error: function(){$BTHeight = -2}
+			})
+			
+			j.ajax(
+			{
+				url: '/cgi-bin/php/BTHeightUpdateTime.php',
+				cache: false,
+				success: function($html){$BTHeightUpdateTime = parseInt($html);},
+				timeout: 3000,
+				error: function(){$curTime = -2;}
+			})
+			
+			document.getElementById('BTBS').innerHTML= $BTBS;
+			document.getElementById('BTTS').innerHTML = $BTTS;
+			document.getElementById('Pump').innerHTML = $pump;
+			document.getElementById('errorVal').innerHTML = $error;
+			document.getElementById('resetError').innerHTML = $resetError;
+			document.getElementById('BTHeight').innerHTML = $BTHeight;
+			document.getElementById('BTHeightUpdateTime').innerHTML = $BTHeightUpdateTime;
+			
+			j('.currentTime').html($curTime);			
+		})
+	});
+});
+</script>
+
+<!-- InstanceEndEditable -->
+
+</head>
+
+<body>
+<table width="760" id="page" align="center">
+	<tr><td>
+    	<table width="710" align="center">
+			<tr><td id="title" align="right">
+            	<span class="right">Water Tank Controller</span>
+           	</td></tr>
+			<tr><td align="right">
+            	<span class="currentTime">Loading...</span>&nbsp;
+           	</td></tr>
+			<tr><td height="50" valign="top">
+            	<h1 align="center">Welcome to WTC3.0!</h1>
+            </td></tr>
+			<tr><td>
+            	<table width="706" align="center">
+                	<tr><td valign="top" id="menu">
+						<a href="/index.htm">Overview</a>
+                        <a href="/log.htm">Log</a>
+                        <a href="/admin.htm">Admin</a>
+                        <a href="/details.htm">Details</a>
+						</td><td align="center">
+	                	<h2 id="heading" class="title2"><!-- InstanceBeginEditable name="heading" -->Details<!-- InstanceEndEditable --></h2>
+                        </td><td id="menu">&nbsp;</td>
+                  	</tr>
+	             </table>
+             </td></tr>
+             <tr><td>
+			 <!-- InstanceBeginEditable name="Content" -->
+         <table id="details" align="center">
+         	<tr><th>Connection Status</th><td id='conStatus'>-</td></tr>
+			<tr><th>BTBS</th><td id='BTBS'>-</td></tr>
+   			<tr><th>BTTS</th><td id='BTTS'>-</td></tr>
+           	<tr><th>Error</th><td id='errorVal'>-</td></tr>
+           	<tr><th>Reset Error</th><td id='resetError'>-</td></tr>
+            <tr><th>Pump</th><td id='Pump'>-</td></tr>
+            <tr><th>BTHeight</th><td id='BTHeight'>-</td></tr>
+			<tr><th>BTHeight Update Time</th><td id='BTHeightUpdateTime'>-</td></tr>
+       	</table>
+			<!-- InstanceEndEditable -->	
+		  </td></tr>
+            <tr><td id="footer">
+				<span class="text">Copyright &copy; 2010 Anthony Day.</span>
+            </td></tr>
+      	</table>
+        </td></tr></table>
+</body>
+<!-- InstanceEnd --></html>
+

@@ -1,0 +1,50 @@
+<html><head>
+<script language='javascript' src='../jquery/jquery-1.8.3.min.js'></script>
+<script language='javascript' src='../jquery/jquery.timers.js'></script>
+<script language='javascript' src='../_javascript/dateformat.js'></script>
+
+<link href="../_CSS/RPi.css" rel="stylesheet" type="text/css" />
+<!-- TemplateBeginEditable name="head" -->
+<!-- TemplateEndEditable -->
+</head>
+
+<body>
+<table width="760" id="page" align="center">
+	<tr><td>
+    	<table width="710" align="center">
+			<tr><td id="title" align="right">
+            	<span class="right">Water Tank Controller</span>
+           	</td></tr>
+			<tr><td align="right">
+            	<span class="currentTime">Loading...</span>&nbsp;
+           	</td></tr>
+			<tr><td height="50" valign="top">
+            	<h1 align="center">Welcome to WTC3.0!</h1>
+            </td></tr>
+			<tr><td>
+            	<table width="706" align="center">
+                	<tr><td valign="top" id="menu">
+						<a href="/index.html">Overview</a>
+                        <a href="/log.html">Log</a>
+                        <a href="/admin.html">Admin</a>
+                        <a href="/details.html">Details</a>
+						</td><td align="center">
+	                	<h2 id="heading" class="title2"><!-- TemplateBeginEditable name="heading" -->
+                        Heading
+<!-- TemplateEndEditable --></h2>
+                        </td><td id="menu">&nbsp;</td>
+                  	</tr>
+	             </table>
+             </td></tr>
+             <tr><td>
+	<!-- TemplateBeginEditable name="content" -->content
+	<!-- TemplateEndEditable -->
+			</td></tr>
+            <tr><td id="footer">
+				<span class="text">Copyright &copy; 2010 Anthony Day.</span>
+            </td></tr>
+      	</table>
+        </td></tr></table>
+</body>
+</html>
+

@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Untitled Document</title>
+
+<script src="moment.min.js"></script>
+
+<script>
+im = 0;
+theImageNames = new Array();
+/*theImageNames[0] = "201303271136"
+theImageNames[1] = "201303271142"
+theImageNames[2] = "201303271148"
+theImageNames[3] = "201303271154"
+theImageNames[4] = "201303271200"
+theImageNames[5] = "201303271206"*/
+
+imageCount = 13;
+
+lastUpdated = 0;
+
+imageBeginning = "http://www.bom.gov.au/radar/IDR023.T.";
+imageEnding = ".png";
+
+delayTime = 100;
+
+time = 0;
+
+window.onload = function () {
+	
+	minutes = parseInt(moment().utc().format("m"));
+	minsOver = minutes % 6; 
+	
+	time = moment().utc().subtract('minutes', minsOver);
+	
+	//moment().utc().format("YYYYMMDDHHmm");
+	nextImage();
+};
+
+function updateTimes()
+{
+	if(lastUpdated < moment().utc().subtract('minutes', 6+4))	//Plus 4 to help prevent using images that dont exist yet!
+	{	
+		if(lastUpdated == 0)
+			time = moment().utc().subtract('minutes', 4);
+		else
+			time = moment().utc();
+			
+		minutes = parseInt(time.format("m"));
+		minsOver = minutes % 6; 
+		
+		time.subtract('minutes', minsOver);
+
+		theImageNames[imageCount - 1] = time.format("YYYYMMDDHHmm");
+
+		for(i = 1; i < imageCount ; i++)
+		{
+			theImageNames[imageCount - 1 - i] = time.subtract('minutes', 6).format("YYYYMMDDHHmm");
+		}
+	
+		lastUpdated = moment().utc();
+	}
+}
+
+function nextImage()
+{
+	updateTimes();
+	//document.getElementById("tempText").innerHTML = document.getElementById("inData").value; //time.format("YYYYMMDDHHmm");
+	//
+	changeImage(imageBeginning + theImageNames[im] + imageEnding);
+	im++;
+	if(im >= theImageNames.length)
+	{
+		im = 0; 
+	}
+
+	if(im == 0 || im == 1)
+		setTimeout('nextImage()', 4*delayTime);
+	else
+		setTimeout('nextImage()', delayTime);
+}
+
+function changeImage(a)
+{
+	document.getElementById("animation").src = a;	
+}
+
+function updateTime()
+{
+	document.getElementById("tempText").innerHTML = document.getElementById("inData").value; //time.format("YYYYMMDDHHmm");
+	delayTime = parseInt(document.getElementById("inData").value);
+}
+</script>
+
+</head>
+
+<body>
+<div id="overlay" style="position: absolute; top: auto; left: auto; z-index: 0; padding: 0px; margin: 0px; background-color: transparent; display: block; width: 512px; height: 557px; background-image: url(http://www.bom.gov.au/products/radar_transparencies/IDR.legend.0.png);">
+<img name="animation" id="animation" class="animation" border="0" height="512" width="512" src="http://www.bom.gov.au/radar/IDR023.T.201303271142.png" alt="Radar images">
+<div id="backgroundDiv" style="width: 512px; height: 512px; background-color: transparent; position: absolute; z-index: -3; left: 0px; top: 0px; background-image: url(http://www.bom.gov.au/products/radar_transparencies/IDR023.background.png);"></div>
+<div id="locationsDiv" style="width: 512px; height: 512px; background-color: transparent; position: absolute; z-index: 7; left: 0px; top: 0px; background-image: url(http://www.bom.gov.au/products/radar_transparencies/IDR023.locations.png);"></div>
+<div id="rangeDiv" style="width: 512px; height: 512px; background-color: transparent; position: absolute; z-index: 2; left: 0px; top: 0px; background-image: url(http://www.bom.gov.au/products/radar_transparencies/IDR023.range.png);"></div>
+<div id="topographyDiv" style="width: 512px; height: 512px; background-color: transparent; position: absolute; z-index: -2; left: 0px; top: 0px; background-image: url(http://www.bom.gov.au/products/radar_transparencies/IDR023.topography.png);"></div></div>
+
+<div style="display:block; position:absolute; left: 600px"><h1 id="tempText">tempText</h1><input type="text" id="inData" value="200" onChange="updateTime()" />
+<applet code=com.charliemouse.cambozola.Viewer
+    archive=cambozola.jar width="800" height="448" style="border-width:1; border-color:gray; border-style:solid;"> <param name=url value="http://fourdays.dyndns.org:8081"> </applet> 
+    </div>
+
+</body>
+</html>
